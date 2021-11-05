@@ -27,8 +27,24 @@ app.sObjs = {
 			x: 0,
 			y: 0
 		},
-		size: 20,
-
+		size: 15,
+		speed: 0,
+		dir: {x:0,y:0},
+		getVelocity: () => {return {
+			x: app.sObjs.dot1.dir.x * app.sObjs.dot1.speed,
+			y: app.sObjs.dot1.dir.y * app.sObjs.dot1.speed
+		}; },
+		updateLocation: () => {
+			let nv = app.sObjs.dot1.getVelocity();
+			app.sObjs.dot1.location.x += nv.x;
+			app.sObjs.dot1.location.y += nv.y;
+		},
+		updateDirection: () => {
+			app.sObjs.dot1.dir = app.fn.getUnitVectorFromDir(Math.random()*(Math.PI*2));
+		},
+		updateSpeed: () => {
+			app.sObjs.dot1.speed = Math.random()*3;
+		}
 	}
 };
 app.in = {
@@ -59,6 +75,10 @@ app.fn.getConstrainedCoords = (location,min,max) => {
 		x: app.fn.clampAround(location.x,min.x,max.x),
 		y: app.fn.clampAround(location.y,min.y,max.y)
 	}
+}
+
+app.fn.getUnitVectorFromDir = (dir) => {
+	return {x: Math.cos(dir),y: Math.sin(dir)};
 }
 
 app.ufn.resize = () => {
@@ -102,12 +122,18 @@ app.setup = () => {
 	app.sObjs.bounds.initBounds();
 	app.sObjs.dot1.location.y = app.win.y - 100;
 
-	app.loop(0);
+	app.mainLoop(0);
+	app.dirLoop();
+	app.speedLoop();
 }
 
 app.update = (deltaTime) => {
-	app.sObjs.dot1.location.x += 10;
-	app.sObjs.dot1.location.y += 5;
+	//app.sObjs.dot1.
+	//Math.random()*(Math.PI*2)
+
+	//app.sObjs.dot1.updateDirection();
+	//app.sObjs.dot1.updateSpeed();
+	app.sObjs.dot1.updateLocation();
 
 	// constrain dot location:
 	app.sObjs.dot1.location = app.fn.getConstrainedCoords(
@@ -128,7 +154,7 @@ app.draw = () => {
 	app.state.cx.fill(dot);
 }
 
-app.loop = (timestamp) => {
+app.mainLoop = (timestamp) => {
 	app.state.dt = timestamp - app.state.lastTimestamp;
 
 	app.update(app.state.dt);
@@ -136,9 +162,25 @@ app.loop = (timestamp) => {
 
 	app.state.targetDT = 33.3333 - app.state.dt;
 	//setTimeout(() => {
-		window.requestAnimationFrame(app.loop);
+		window.requestAnimationFrame(app.mainLoop);
 	//},app.state.targetDT);
 	app.state.lastTimestamp = timestamp;
+}
+
+app.dirLoop = () => {
+	app.sObjs.dot1.updateDirection();
+	console.log('update dir');
+	setTimeout(() => {
+		app.dirLoop();
+	},2000);
+}
+
+app.speedLoop = () => {
+	app.sObjs.dot1.updateSpeed();
+	console.log('update speed');
+	setTimeout(() => {
+		app.speedLoop();
+	},1000);
 }
 
 document.addEventListener('DOMContentLoaded', app.setup);
