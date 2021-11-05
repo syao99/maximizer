@@ -12,7 +12,7 @@ app.sObjs = {
 	bounds: {
 		min: {x:0,y:0},
 		max :{x:0,y:0},
-		pad: 30,
+		pad: 20,
 		initBounds: () => {
 			app.sObjs.bounds.min.x = app.sObjs.bounds.pad;
 			app.sObjs.bounds.min.y = app.sObjs.bounds.pad;
