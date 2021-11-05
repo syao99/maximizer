@@ -10,16 +10,20 @@ app.win = {};
 app.params = {};
 app.sObjs = {
 	bounds: {
+		min: {x:0,y:0},
+		max :{x:0,y:0},
 		initBounds: () => {
-			app.sObjs.bounds.min = {};
-			app.sObjs.bounds.max = {};
-			app.sObjs.bounds.min.x = 0,
-			app.sObjs.bounds.min.y = 0,
-			app.sObjs.bounds.max.x = app.win.x,
-			app.sObjs.bounds.max.y = app.win.y
+			app.sObjs.bounds.min.x = 0;
+			app.sObjs.bounds.min.y = 0;
+			app.sObjs.bounds.max.x = app.win.x;
+			app.sObjs.bounds.max.y = app.win.y;
 		},
-		updateBounds: (mouseY) => {
+		updateBoundsUser: (mouseY) => {
 			app.sObjs.bounds.min.y = mouseY;
+		},
+		updateBounds: () => {
+			app.sObjs.bounds.max.x = app.win.x;
+			app.sObjs.bounds.max.y = app.win.y;
 		}
 	},
 	dot1: {
@@ -27,7 +31,7 @@ app.sObjs = {
 			x: 0,
 			y: 0
 		},
-		size: 15,
+		size: 10,
 		speed: 0,
 		dir: {x:0,y:0},
 		getVelocity: () => {return {
@@ -43,7 +47,7 @@ app.sObjs = {
 			app.sObjs.dot1.dir = app.fn.getUnitVectorFromDir(Math.random()*(Math.PI*2));
 		},
 		updateSpeed: () => {
-			app.sObjs.dot1.speed = Math.random()*3;
+			app.sObjs.dot1.speed = Math.random()*5;
 		}
 	}
 };
@@ -82,10 +86,14 @@ app.fn.getUnitVectorFromDir = (dir) => {
 }
 
 app.ufn.resize = () => {
+	console.log('resize');
+	let boundsRatio = app.sObjs.bounds.min.y / app.win.y;
 	app.win.x = window.innerWidth * 1;
 	app.win.y = window.innerHeight * 1;
 	app.state.canvas.width = app.win.x;
 	app.state.canvas.height = app.win.y;
+	app.sObjs.bounds.updateBounds();
+	app.sObjs.bounds.updateBoundsUser(boundsRatio * app.win.y);
 }
 
 app.ufn.clearCanvas = () => {
@@ -95,7 +103,7 @@ app.ufn.clearCanvas = () => {
 app.in.mouse.mousedown = () => {
 	// set min bound to mouse y.
 	//app.sObjs.bounds.min.y = app.in.mouse.pos.y;
-	app.sObjs.bounds.updateBounds(app.in.mouse.pos.y);
+	app.sObjs.bounds.updateBoundsUser(app.in.mouse.pos.y);
 	console.log(app.sObjs.bounds.min.y);
 	//app.sObjs.dot1.location = app.in.mouse.pos;
 }
@@ -128,11 +136,6 @@ app.setup = () => {
 }
 
 app.update = (deltaTime) => {
-	//app.sObjs.dot1.
-	//Math.random()*(Math.PI*2)
-
-	//app.sObjs.dot1.updateDirection();
-	//app.sObjs.dot1.updateSpeed();
 	app.sObjs.dot1.updateLocation();
 
 	// constrain dot location:
@@ -169,7 +172,6 @@ app.mainLoop = (timestamp) => {
 
 app.dirLoop = () => {
 	app.sObjs.dot1.updateDirection();
-	console.log('update dir');
 	setTimeout(() => {
 		app.dirLoop();
 	},2000);
@@ -177,7 +179,6 @@ app.dirLoop = () => {
 
 app.speedLoop = () => {
 	app.sObjs.dot1.updateSpeed();
-	console.log('update speed');
 	setTimeout(() => {
 		app.speedLoop();
 	},1000);
