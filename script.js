@@ -1,15 +1,16 @@
 let app = {};
-app.state = {}
-app.state.dt = 0;
-app.state.lastTimestamp = 0;
-app.state.targetDT = 0;
-app.state.canvas;
-app.state.cx;
+app.state = {
+	dt: 0,
+	lastTimestamp: 0,
+	targetDT: 0,
+	canvas: {},
+	cx: {}
+};
 app.win = {};
 app.params = {};
 app.sObjs = {
 	bounds: {
-		setBounds: () => {
+		initBounds: () => {
 			app.sObjs.bounds.min = {};
 			app.sObjs.bounds.max = {};
 			app.sObjs.bounds.min.x = 0,
@@ -18,7 +19,7 @@ app.sObjs = {
 			app.sObjs.bounds.max.y = app.win.y
 		},
 		updateBounds: (mouseY) => {
-			app.sObjs.bounds.minY = mouseY;
+			app.sObjs.bounds.min.y = mouseY;
 		}
 	},
 	dot1: {
@@ -26,7 +27,8 @@ app.sObjs = {
 			x: 0,
 			y: 0
 		},
-		size: 20
+		size: 20,
+
 	}
 };
 app.in = {
@@ -72,7 +74,8 @@ app.ufn.clearCanvas = () => {
 
 app.in.mouse.mousedown = () => {
 	// set min bound to mouse y.
-	app.sObjs.bounds.min.y = app.in.mouse.pos.y;
+	//app.sObjs.bounds.min.y = app.in.mouse.pos.y;
+	app.sObjs.bounds.updateBounds(app.in.mouse.pos.y);
 	console.log(app.sObjs.bounds.min.y);
 	//app.sObjs.dot1.location = app.in.mouse.pos;
 }
@@ -89,14 +92,14 @@ app.in.mouse.mousemove = (mouseEvent) => {
 	//console.log("mouse location: " + app.sObjs.dot1.location);
 }
 
-app.fn.setup = () => {
+app.setup = () => {
 	app.state.canvas = document.getElementById('app');
 	app.state.cx = app.state.canvas.getContext('2d');
 
 	window.onresize = app.ufn.resize;
 	app.ufn.resize();
 
-	app.sObjs.bounds.setBounds();
+	app.sObjs.bounds.initBounds();
 	app.sObjs.dot1.location.y = app.win.y - 100;
 
 	app.loop(0);
@@ -111,7 +114,6 @@ app.update = (deltaTime) => {
 		app.sObjs.dot1.location,
 		app.sObjs.bounds.min,
 		app.sObjs.bounds.max);
-	console.log('location: ' + app.sObjs.dot1.location.x);
 }
 
 app.draw = () => {
@@ -139,7 +141,7 @@ app.loop = (timestamp) => {
 	app.state.lastTimestamp = timestamp;
 }
 
-document.addEventListener('DOMContentLoaded', app.fn.setup);
+document.addEventListener('DOMContentLoaded', app.setup);
 document.addEventListener('mousedown', app.in.mouse.mousedown);
 document.addEventListener('mouseup', app.in.mouse.mouseup);
 document.addEventListener('mousemove', app.in.mouse.mousemove);
