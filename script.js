@@ -32,8 +32,9 @@ app.sObjs = {
 			x: 0,
 			y: 0
 		},
-		size: 10,
+		size: 8,
 		speed: 0,
+		color: '#FFF',
 		dir: {x:0,y:0},
 		getVelocity: () => {return {
 			x: app.sObjs.dot1.dir.x * app.sObjs.dot1.speed,
@@ -154,7 +155,7 @@ app.draw = () => {
 	        app.sObjs.dot1.size,
 	        0,2*Math.PI,false);
 
-	app.state.cx.fillStyle = '#F00';
+	app.state.cx.fillStyle = app.sObjs.dot1.color;
 	app.state.cx.fill(dot);
 }
 
