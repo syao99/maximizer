@@ -12,18 +12,19 @@ app.sObjs = {
 	bounds: {
 		min: {x:0,y:0},
 		max :{x:0,y:0},
+		pad: 30,
 		initBounds: () => {
-			app.sObjs.bounds.min.x = 0;
-			app.sObjs.bounds.min.y = 0;
-			app.sObjs.bounds.max.x = app.win.x;
-			app.sObjs.bounds.max.y = app.win.y;
+			app.sObjs.bounds.min.x = app.sObjs.bounds.pad;
+			app.sObjs.bounds.min.y = app.sObjs.bounds.pad;
+			app.sObjs.bounds.max.x = app.win.x - app.sObjs.bounds.pad;
+			app.sObjs.bounds.max.y = app.win.y - app.sObjs.bounds.pad;
 		},
 		updateBoundsUser: (mouseY) => {
 			app.sObjs.bounds.min.y = mouseY;
 		},
 		updateBounds: () => {
-			app.sObjs.bounds.max.x = app.win.x;
-			app.sObjs.bounds.max.y = app.win.y;
+			app.sObjs.bounds.max.x = app.win.x - app.sObjs.bounds.pad;
+			app.sObjs.bounds.max.y = app.win.y - app.sObjs.bounds.pad;
 		}
 	},
 	dot1: {
@@ -76,8 +77,8 @@ app.fn.clampAround = (val,min,max) => {
 }
 app.fn.getConstrainedCoords = (location,min,max) => {
 	return {
-		x: app.fn.clampAround(location.x,min.x,max.x),
-		y: app.fn.clampAround(location.y,min.y,max.y)
+		x: app.fn.clamp(location.x,min.x,max.x),
+		y: app.fn.clamp(location.y,min.y,max.y)
 	}
 }
 
